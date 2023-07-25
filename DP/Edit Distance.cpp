@@ -1,5 +1,5 @@
 
-// Recursive
+// Recursive (Top-Down)
 const ll inf = 1e9+10;
 const ll sz = 5e3+1;
 ll dp[sz][sz];
@@ -34,4 +34,49 @@ void dracarys(){
   n = a.size();
   m = b.size();
   cout << rec(0, 0) << '\n';  
+}
+
+// Recursive (Bottom-Top)
+ll rec(ll n, ll m){
+	if(n < 0 and m < 0) return 0;
+	if( n < 0) return m+1;
+	if(m<0) return n+1;
+	if(dp[n][m] != -1) return dp[n][m];
+
+	ll ans = inf;
+	if(a[n]==b[m]) ans = rec(n-1, m-1);
+	ll add = 1 + rec(n, m-1);
+	ll del = 1 + rec(n-1, m);
+	ll rep = 1 + rec(n-1, m-1);
+	ans = min(ans, add);
+	ans = min(ans, min(del, rep));
+	return dp[n][m] = ans;
+}
+
+// Iterative 
+void dracarys(){
+	
+	memset(dp, -1, sizeof dp);
+	cin >> a >> b;
+	n = a.size();
+	m = b.size();
+	a = '#' + a;
+	b = '#' + b;
+	dp[0][0] = 0;
+	for (ll i=1; i<=n; i++) dp[i][0] = i;
+	for (ll j=1; j <= m; j++) dp[0][j] = j;
+
+	for (ll i=1; i<=n; i++){
+		for (ll j=1; j<=m; j++){
+				ll ans = inf;
+				if(a[i]==b[j]) ans = dp[i-1][j-1];
+				ll add = 1 + dp[i][j-1]; //rec(n, m-1);
+				ll del = 1 + dp[i-1][j]; //rec(n-1, m);
+				ll rep = 1 + dp[i-1][j-1]; //rec(n-1, m-1);
+				ans = min(ans, add);
+				ans = min(ans, min(del, rep));
+			   dp[i][j] = ans;
+		}
+	}
+	cout << dp[n][m] << '\n';
 }
